@@ -1,0 +1,14 @@
+#!/bin/env ruby
+
+require './configuration'
+require './player'
+
+configuration = Configuration.new
+dbfile = configuration.dbfile
+player = Player.new
+ARGV.each do |arg|
+  path = dbfile.matchfor(arg)
+  if path
+    player.playaudio(path)
+  end
+end
