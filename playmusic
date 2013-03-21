@@ -7,8 +7,10 @@ configuration = Configuration.new
 dbfile = configuration.dbfile
 player = Player.new
 ARGV.each do |arg|
-  path = dbfile.matchfor(arg)
-  if path
-    player.playaudio(path)
+  list = dbfile.matchesfor(arg)
+  if list.length > 0
+    player.playfiles(list)
+  else
+    $stderr.puts "No matches found for #{arg}"
   end
 end

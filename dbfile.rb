@@ -32,19 +32,16 @@ puts "executing <#{command}>"
     end
     raise '@file must be open' unless not @file.closed?
 
-puts "file pos: #{@file.pos}"
-    @audio_files = @file.readlines
+    files = @file.readlines
+    @audio_files = files.collect {|s| s.chomp}
+    # Searching (potentially) UTF-8-encoded file names doesn't work very
+    # well, so a converted list (in @audio_files_in_ascii) will be used
+    # instead.
     @audio_files_in_ascii = []
     for i in 0 .. @audio_files.length - 1 do
       @audio_files_in_ascii[i] = @audio_files[i].encode('US-ASCII',
         :undef => :replace, :invalid => :replace)
     end
-dbx = @audio_files[5957]
-puts dbx.encoding
-dbx2 = @audio_files_in_ascii[5957]
-puts dbx2.encoding
-foodog = 'foo'
-puts foodog.encoding
   end
 
   def path
@@ -57,25 +54,32 @@ puts foodog.encoding
 
   # First file path found that matches `pattern'
   def matchfor(pattern)
-puts "in file database of size #{@audio_files.length}, looking for #{pattern}"
-puts "first path in audio_files: " + @audio_files[0].to_s
-    result = ''
-#    matches = @audio_files_in_ascii.grep '/' + pattern + '/i'
-matches = @audio_files_in_ascii.grep /#{pattern}/i
-#matches = @audio_files_in_ascii.grep /bomb/
+    result = nil
+    matches = @audio_files_in_ascii.grep /#{pattern}/i
     if matches.length > 0
       result = matches[0]
-    else
-      puts "no matches found for #{pattern}"
     end
-x = ['a', 'b', '77', 'foobar', 'dog'].grep /o/
-puts "x: #{x}"
-#y = @audio_files.grep /o/
-#puts "y: #{y}"
     result
   end
 
   # All file paths found that match `pattern'
+  def matchesforold(pattern)
+    result = @audio_files_in_ascii.grep /#{pattern}/i
+    result
+  end
   def matchesfor(pattern)
+    result = []; j = 0
+puts "afia size: #{@audio_files_in_ascii.length}"
+puts "afia[1]: #{@audio_files_in_ascii[1]}"
+puts "pattern: #{pattern}"
+    r = Regexp.new(/#{pattern}/i)
+puts "r: #{r}"
+    for i in 0 .. @audio_files_in_ascii.length - 1 do
+      if r.match(@audio_files_in_ascii[i])
+        result[j] = @audio_files[i]
+        j += 1
+      end
+    end
+    result
   end
 end
