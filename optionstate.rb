@@ -1,10 +1,12 @@
 class OptionState
-  attr_reader :regular_arguments, :report_only, :listfiles, :cl_error
+  attr_reader :regular_arguments, :report_only, :listfiles, :cl_error,
+    :rebuild_db
 
   def initialize
     @report_only = false
     @cl_error = false
     @listfiles = false
+    @rebuild_db = false
     @regular_arguments = []
     i = 0
     while i < ARGV.length do
@@ -18,7 +20,10 @@ class OptionState
   end
 
   def usage
-    "Usage: $0 [-l] pattern ..."
+    "Usage: $0 [options] pattern ...\n" + "Options:\n" +
+      "  -l      list (Don't play) all matching files\n" +
+      "  -L      list (and play) all matching files\n" +
+      "  -f      force rebuild of database"
   end
 
 private
@@ -33,6 +38,8 @@ private
       @report_only = true
     when /-L/
       @listfiles = true
+    when /-f/
+      @rebuild_db = true
     else
       @cl_error = true
     end

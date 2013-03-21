@@ -1,12 +1,12 @@
 class DBFile
-  include Process
 #  include Handshake::ClassMethods
-  attr_reader :file, :audio_files
+  attr_reader :path, :audio_files, :dbfile_newly_created
 
-  def initialize(path)
-    if File.exists?(path)
-      @file = File.new(path, 'r')
-    else
+  def initialize(path, rebuild = false)
+    @dbfile_newly_created = false
+    @path = path
+    if rebuild or not File.exists?(path)
+      @dbfile_newly_created = true
       dirpath = File.dirname(path)
       if not File.exists?(dirpath)
         begin
@@ -26,28 +26,22 @@ class DBFile
         outstream = IO.popen(command)
         @file.write(outstream.read)
       end
-      @file = File.new(@file.path)
     end
-    raise '@file must be open' unless not @file.closed?
-
-    files = @file.readlines
-    @audio_files = files.collect {|s| s.chomp}
-    # Searching (potentially) UTF-8-encoded file names doesn't work very
-    # well, so a converted list (in @audio_files_in_ascii) will be used
-    # instead.
-    @audio_files_in_ascii = []
-    for i in 0 .. @audio_files.length - 1 do
-      @audio_files_in_ascii[i] = @audio_files[i].encode('US-ASCII',
-        :undef => :replace, :invalid => :replace)
-    end
+    load_in_memory_db
   end
 
-  def path
-    if @file
-      @file.path
-    else
-      ''
+  # Append any files found matching the specified patterns to the database
+  # file.
+  def append_to_database(patterns)
+    basecommand = "locate -r '"
+    open(self.path, 'a') do |f|
+      patterns.each do |p|
+        command = "#{basecommand}#{p}'"
+        outstream = IO.popen(command)
+        f.write(outstream.read)
+      end
     end
+    load_in_memory_db
   end
 
   # First file path found that matches `pattern'
@@ -61,10 +55,6 @@ class DBFile
   end
 
   # All file paths found that match `pattern'
-  def matchesforold(pattern)
-    result = @audio_files_in_ascii.grep /#{pattern}/i
-    result
-  end
   def matchesfor(pattern)
     result = []; j = 0
     r = Regexp.new(/#{pattern}/i)
@@ -75,5 +65,22 @@ class DBFile
       end
     end
     result
+  end
+
+  private
+
+  # Load @audio_files and @audio_files_in_ascii arrays
+  def load_in_memory_db
+    @file = File.new(self.path, 'r')
+    files = @file.readlines
+    @audio_files = files.collect {|s| s.chomp}
+    # Searching (potentially) UTF-8-encoded file names doesn't work very
+    # well, so a converted list (in @audio_files_in_ascii) will be used
+    # instead.
+    @audio_files_in_ascii = []
+    for i in 0 .. @audio_files.length - 1 do
+      @audio_files_in_ascii[i] = @audio_files[i].encode('US-ASCII',
+        :undef => :replace, :invalid => :replace)
+    end
   end
 end
