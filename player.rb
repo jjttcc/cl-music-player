@@ -8,11 +8,12 @@ class Player
   end
 
   def playfiles(list)
-    command = 'echo vlc '
+    command = 'vlc '
     list.each do |f|
-      command += "'#{f}' "
+      command += "\"#{f}\" "
     end
     pid = fork { exec command }
     waitpid(pid)
   end
+
 end

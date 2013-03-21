@@ -2,26 +2,37 @@
 
 require './configuration'
 require './player'
-
-def is_option(arg)
-  arg =~ /^-/
-end
+require './optionstate'
 
 configuration = Configuration.new
 dbfile = configuration.dbfile
 player = Player.new
+opt = OptionState.new
+if opt.cl_error
+  puts opt.usage
+  exit 1
+end
+args = opt.regular_arguments
 list = []
-for i in 0 .. ARGV.length - 1 do
-  if is_option(ARGV[i])
-puts "it's an option."
-  else
-    l = dbfile.matchesfor(ARGV[i])
-    if l.empty?
-      $stderr.puts "No matches found for #{ARGV[i]}"
-    end
-    list += l
+i = 0
+while i < args.length do
+  l = dbfile.matchesfor(args[i])
+  if l.empty?
+    $stderr.puts "No matches found for #{args[i]}"
+  end
+  list += l
+  i += 1
+end
+if opt.listfiles
+  output = list.join("\n")
+  pager = ENV['PAGER'] || 'more'
+  begin
+    IO.popen(pager, "w") { |f| f.puts output }
+  rescue
   end
 end
-if list.length > 0
-  player.playfiles(list)
+if not opt.report_only
+  if list.length > 0
+    player.playfiles(list)
+  end
 end
