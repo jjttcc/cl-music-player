@@ -1,6 +1,6 @@
 class OptionState
   attr_reader :regular_arguments, :report_only, :listfiles, :cl_error,
-    :rebuild_db
+    :rebuild_db, :showinfo
 
   def initialize
     @report_only = false
@@ -20,13 +20,18 @@ class OptionState
   end
 
   def usage
-    "Usage: $0 [options] pattern ...\n" + "Options:\n" +
-      "  -l      list (Don't play) all matching files\n" +
-      "  -L      list (and play) all matching files\n" +
-      "  -f      force rebuild of database"
+    result = "Usage: $0 [options] pattern ...\n" + "Options:\n" +
+      "  -l      List (Don't play) all matching files\n" +
+      "  -L      List (and play) all matching files\n"
+    if exiftool_available
+      result += "  -i      display Information about each selected file\n"
+    end
+    result += "  -f      Force rebuild of database"
+    result
   end
 
-private
+  private
+
   def is_option(arg)
     arg =~ /^-/
   end
@@ -40,9 +45,24 @@ private
       @listfiles = true
     when /-f/
       @rebuild_db = true
+    when /-i/
+      @showinfo = true
     else
       @cl_error = true
     end
     i
   end
+
+  def exiftool_available
+    result = false
+    etfile = 'exiftool'
+    pathparts = ENV['PATH'].split(':')
+    i = 0
+    while result == false and i < pathparts.length
+      result = File.exists?(File.join(pathparts[i], etfile))
+      i += 1
+    end
+    result
+  end
+
 end

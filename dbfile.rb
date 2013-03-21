@@ -23,8 +23,8 @@ class DBFile
       basecommand = "locate -r '\\."
       ['wav', 'flac', 'mp3', 'ogg'].each do |extension|
         command = "#{basecommand}#{extension}$'"
-        outstream = IO.popen(command)
-        @file.write(outstream.read)
+        stream = IO.popen(command)
+        @file.write(stream.read)
       end
     end
     load_in_memory_db
@@ -37,8 +37,8 @@ class DBFile
     open(self.path, 'a') do |f|
       patterns.each do |p|
         command = "#{basecommand}#{p}'"
-        outstream = IO.popen(command)
-        f.write(outstream.read)
+        stream = IO.popen(command)
+        f.write(stream.read)
       end
     end
     load_in_memory_db
