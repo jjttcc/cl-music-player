@@ -23,9 +23,7 @@ class DBFile
       basecommand = "locate -r '\\."
       ['wav', 'flac', 'mp3', 'ogg'].each do |extension|
         command = "#{basecommand}#{extension}$'"
-puts "executing <#{command}>"
         outstream = IO.popen(command)
-        puts outstream.inspect
         @file.write(outstream.read)
       end
       @file = File.new(@file.path)
@@ -69,11 +67,7 @@ puts "executing <#{command}>"
   end
   def matchesfor(pattern)
     result = []; j = 0
-puts "afia size: #{@audio_files_in_ascii.length}"
-puts "afia[1]: #{@audio_files_in_ascii[1]}"
-puts "pattern: #{pattern}"
     r = Regexp.new(/#{pattern}/i)
-puts "r: #{r}"
     for i in 0 .. @audio_files_in_ascii.length - 1 do
       if r.match(@audio_files_in_ascii[i])
         result[j] = @audio_files[i]
