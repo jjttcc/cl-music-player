@@ -8,5 +8,7 @@ class InfoTool
 
   # Metadata information for the specified file
   def info_for(file)
+    stream = IO.popen(extraction_command(file))
+    stream.read
   end
 end

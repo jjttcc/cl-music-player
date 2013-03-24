@@ -4,8 +4,8 @@ require_relative './configuration'
 require_relative './player'
 require_relative './optionstate'
 
-opt = OptionState.new
-configuration = Configuration.new(opt)
+configuration = Configuration.new
+opt = configuration.optionstate
 dbfile = configuration.dbfile
 player = Player.new
 if opt.cl_error
@@ -39,16 +39,26 @@ if not nonmatches.empty?
   end
 end
 
-if opt.listfiles
-  output = list.join("\n")
+if not opt.report_only
+  if list.length > 0
+    player.playfiles(list)
+  end
+end
+if opt.listfiles or opt.showinfo
+  if not opt.showinfo
+    output = list.join("\n")
+  else
+    output = ''
+    list.each do |path|
+      output += "#{path}\n"
+      tool = configuration.infotool
+      output += tool.info_for(path)
+      output += "\n"
+    end
+  end
   pager = ENV['PAGER'] || 'more'
   begin
     IO.popen(pager, "w") { |f| f.puts output }
   rescue
-  end
-end
-if not opt.report_only
-  if list.length > 0
-    player.playfiles(list)
   end
 end

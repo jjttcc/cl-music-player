@@ -1,9 +1,12 @@
 class DBFile
 #  include Handshake::ClassMethods
   attr_reader :path, :audio_files, :dbfile_newly_created
+  @@audio_extensions = ['wav', 'flac', 'mp3', 'ogg']
+  @@audio_ext_expr = '\.' + @@audio_extensions.join('$|\.') + '$'
 
   def initialize(path, rebuild = false)
     @dbfile_newly_created = false
+#!!!!!puts 'axtexpr: ' + @@audio_ext_expr.to_s
     @path = path
     if rebuild or not File.exists?(path)
       @dbfile_newly_created = true
@@ -21,7 +24,7 @@ class DBFile
       end
       @file = File.new(path, 'w')
       basecommand = "locate -r '\\."
-      ['wav', 'flac', 'mp3', 'ogg'].each do |extension|
+      @@audio_extensions.each do |extension|
         command = "#{basecommand}#{extension}$'"
         stream = IO.popen(command)
         @file.write(stream.read)
@@ -36,9 +39,18 @@ class DBFile
     basecommand = "locate -r '"
     open(self.path, 'a') do |f|
       patterns.each do |p|
-        command = "#{basecommand}#{p}'"
+        char1 = p[0]
+        if char1 =~ /[A-Za-z]/
+          # Allow locate to look for both init cap and init lowercase.
+          ptrn = "[#{char1.upcase}#{char1.downcase}]" + p[1..-1]
+        else
+          ptrn = p
+        end
+        command = "#{basecommand}#{ptrn}'"
         stream = IO.popen(command)
-        f.write(stream.read)
+        input = stream.read
+        list = input.split("\n").grep(/#{@@audio_ext_expr}/)
+        f.write(list.join("\n"))
       end
     end
     load_in_memory_db

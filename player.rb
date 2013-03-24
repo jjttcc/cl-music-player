@@ -4,7 +4,7 @@ class Player
   def playfile(path)
     command = "vlc '#{path}'"
     pid = fork { exec command }
-    waitpid(pid)
+#    waitpid(pid)
   end
 
   def playfiles(list)
@@ -14,7 +14,7 @@ class Player
     end
     pid = fork { exec command }
 #!!!Note: Use waitpid2 to also get/check command's exit status.
-    waitpid(pid)
+#    waitpid(pid)
   end
 
 end

@@ -1,13 +1,12 @@
 # InfoTool implemented using the exiftool program
 
-require './infotool'
+require_relative './infotool'
 
 class ExifInfoTool < InfoTool
   def initialize
   end
 
-  def info_for(file)
-    stream = IO.popen(command)
-    @file.write(stream.read)
-  end
+    def extraction_command(file)
+      "exiftool #{file}"
+    end
 end
