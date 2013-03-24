@@ -26,6 +26,8 @@ class OptionState
       "  -L      List (and play) all matching files\n"
     if @config.infotool
       result += "  -i      display Information about each selected file\n"
+      result += "  -I      display Information about (but don't play) " +
+        "each selected file\n"
     end
     result += "  -f      Force rebuild of database"
     result
@@ -48,6 +50,8 @@ class OptionState
       @rebuild_db = true
     when /-i/
       @showinfo = true
+    when /-I/
+      @showinfo = true; @report_only = true
     else
       @cl_error = true
     end
