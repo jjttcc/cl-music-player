@@ -22,8 +22,8 @@ class OptionState
 
   def usage
     result = "Usage: $0 [options] pattern ...\n" + "Options:\n" +
-      "  -l      List (Don't play) all matching files\n" +
-      "  -L      List (and play) all matching files\n"
+      "  -l      List (and play) all matching files\n" +
+      "  -L      List, but don't play, all matching files\n"
     if @config.infotool
       result += "  -i      display Information about each selected file\n"
       result += "  -I      display Information about (but don't play) " +
@@ -43,9 +43,8 @@ class OptionState
     case ARGV[i]
     when /-l/
       @listfiles = true
-      @report_only = true
     when /-L/
-      @listfiles = true
+      @listfiles = true; @report_only = true
     when /-f/
       @rebuild_db = true
     when /-i/
