@@ -1,12 +1,16 @@
 class DBFile
 #  include Handshake::ClassMethods
   attr_reader :path, :audio_files, :db_newly_created
+
+  private
+
   @@audio_extensions = ['wav', 'flac', 'mp3', 'ogg']
   @@audio_ext_expr = '\.' + @@audio_extensions.join('$|\.') + '$'
+  @@default_editor = 'vi'
+
 
   def initialize(path, rebuild = false)
     @db_newly_created = false
-#!!!!!puts 'axtexpr: ' + @@audio_ext_expr.to_s
     @path = path
     if rebuild or not File.exists?(path)
       @db_newly_created = true
@@ -32,6 +36,8 @@ class DBFile
     end
     load_in_memory_db
   end
+
+  public
 
   # Append any files found matching the specified patterns to the database
   # file.
@@ -77,6 +83,15 @@ class DBFile
       end
     end
     result
+  end
+
+  # Provide user-editing of the database.
+  def edit
+    editor = ENV['EDITOR']
+    if not editor
+      editor = @@default_editor
+    end
+    system("#{editor} #{path()}")
   end
 
   private

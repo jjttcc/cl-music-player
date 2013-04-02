@@ -1,6 +1,6 @@
 class OptionState
   attr_reader :regular_arguments, :report_only, :listfiles, :cl_error,
-    :rebuild_db, :showinfo
+    :rebuild_db, :showinfo, :editdb
 
   def initialize(config)
     @report_only = false
@@ -30,6 +30,7 @@ class OptionState
         "each selected file\n"
     end
     result += "  -f      Force rebuild of database"
+    result += "\n  -e      Edit database with $EDITOR"
     result
   end
 
@@ -51,6 +52,8 @@ class OptionState
       @showinfo = true
     when /-I/
       @showinfo = true; @report_only = true
+    when /-e/
+      @editdb = true; @report_only = true
     else
       @cl_error = true
     end

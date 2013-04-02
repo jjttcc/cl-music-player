@@ -39,6 +39,10 @@ if not nonmatches.empty?
   end
 end
 
+if opt.editdb
+  db.edit
+  exit 0
+end
 if not opt.report_only
   if list.length > 0
     player.playfiles(list)
