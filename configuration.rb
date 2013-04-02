@@ -2,11 +2,11 @@ require_relative './dbfile'
 require_relative './exifinfotool'
 
 class Configuration
-  attr_reader :dbfile, :infotool, :optionstate
+  attr_reader :db, :infotool, :optionstate
 
   def initialize
     @optionstate = OptionState.new(self)
-    @dbfile = DBFile.new(File.join(ENV['HOME'], '.cache', 'playmusic',
+    @db = DBFile.new(File.join(ENV['HOME'], '.cache', 'playmusic',
       'database'), optionstate.rebuild_db)
     if infotool_available
       @infotool = ExifInfoTool.new

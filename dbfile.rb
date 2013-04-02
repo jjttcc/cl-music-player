@@ -1,15 +1,15 @@
 class DBFile
 #  include Handshake::ClassMethods
-  attr_reader :path, :audio_files, :dbfile_newly_created
+  attr_reader :path, :audio_files, :db_newly_created
   @@audio_extensions = ['wav', 'flac', 'mp3', 'ogg']
   @@audio_ext_expr = '\.' + @@audio_extensions.join('$|\.') + '$'
 
   def initialize(path, rebuild = false)
-    @dbfile_newly_created = false
+    @db_newly_created = false
 #!!!!!puts 'axtexpr: ' + @@audio_ext_expr.to_s
     @path = path
     if rebuild or not File.exists?(path)
-      @dbfile_newly_created = true
+      @db_newly_created = true
       dirpath = File.dirname(path)
       if not File.exists?(dirpath)
         begin

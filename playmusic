@@ -6,7 +6,7 @@ require_relative './optionstate'
 
 configuration = Configuration.new
 opt = configuration.optionstate
-dbfile = configuration.dbfile
+db = configuration.db
 player = Player.new
 if opt.cl_error
   puts opt.usage
@@ -17,9 +17,9 @@ list = []
 i = 0
 nonmatches = []
 args.each do |arg|
-  l = dbfile.matchesfor(arg)
+  l = db.matchesfor(arg)
   if l.empty?
-    if not dbfile.dbfile_newly_created
+    if not db.db_newly_created
       nonmatches << arg
     else
       $stderr.puts "No matches found for #{arg}"
@@ -29,9 +29,9 @@ args.each do |arg|
 end
 # If some arguments did not match any files, try rebuilding the database.
 if not nonmatches.empty?
-  dbfile.append_to_database(nonmatches)
+  db.append_to_database(nonmatches)
   nonmatches.each do |ptrn|
-    l = dbfile.matchesfor(ptrn)
+    l = db.matchesfor(ptrn)
     if l.empty?
       $stderr.puts "No matches found for #{ptrn}"
     end
