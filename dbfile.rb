@@ -1,34 +1,34 @@
+# encoding: UTF-8
+
 class DBFile
-#  include Handshake::ClassMethods
   attr_reader :path, :audio_files, :db_newly_created
 
   private
 
-  @@audio_extensions = ['wav', 'flac', 'mp3', 'ogg']
-  @@audio_ext_expr = '\.' + @@audio_extensions.join('$|\.') + '$'
-  @@default_editor = 'vi'
-
+  AUDIO_EXTENSIONS = %w[wav flac mp3 ogg]
+  AUDIO_EXT_EXPR = '\.' + AUDIO_EXTENSIONS.join('$|\.') + '$'
+  DEFAULT_EDITOR = 'vi'
 
   def initialize(path, rebuild = false)
     @db_newly_created = false
     @path = path
-    if rebuild or not File.exists?(path)
+    if rebuild || ! File.exists?(path)
       @db_newly_created = true
       dirpath = File.dirname(path)
-      if not File.exists?(dirpath)
+      if ! File.exists?(dirpath)
         begin
           Dir.mkdir(dirpath)
         rescue SystemCallError => e
           puts "Fatal error: Failed to create database file:\n" + e.message
           exit 24
         end
-      elsif not File.directory?(dirpath)
+      elsif ! File.directory?(dirpath)
         $stderr.puts "Fatal error: #{dirpath} exists but is not a directory."
         exit 23
       end
       @file = File.new(path, 'w')
       basecommand = "locate -r '\\."
-      @@audio_extensions.each do |extension|
+      AUDIO_EXTENSIONS.each do |extension|
         command = "#{basecommand}#{extension}$'"
         stream = IO.popen(command)
         @file.write(stream.read)
@@ -55,7 +55,7 @@ class DBFile
         command = "#{basecommand}#{ptrn}'"
         stream = IO.popen(command)
         input = stream.read
-        list = input.split("\n").grep(/#{@@audio_ext_expr}/)
+        list = input.split("\n").grep(/#{AUDIO_EXT_EXPR}/)
         f.write(list.join("\n"))
       end
     end
@@ -65,7 +65,7 @@ class DBFile
   # First file path found that matches `pattern'
   def matchfor(pattern)
     result = nil
-    matches = @audio_files_in_ascii.grep /#{pattern}/i
+    matches = @audio_files_in_ascii.grep(/#{pattern}/i)
     if matches.length > 0
       result = matches[0]
     end
@@ -74,9 +74,11 @@ class DBFile
 
   # All file paths found that match `pattern'
   def matchesfor(pattern)
-    result = []; j = 0
+    result = []
+    j = 0
     r = Regexp.new(/#{pattern}/i)
-    for i in 0 .. @audio_files_in_ascii.length - 1 do
+#    for i in 0 .. @audio_files_in_ascii.length - 1 do
+    (0 .. @audio_files_in_ascii.length - 1).each do |i|
       if r.match(@audio_files_in_ascii[i])
         result[j] = @audio_files[i]
         j += 1
@@ -88,8 +90,8 @@ class DBFile
   # Provide user-editing of the database.
   def edit
     editor = ENV['EDITOR']
-    if not editor
-      editor = @@default_editor
+    if ! editor
+      editor = DEFAULT_EDITOR
     end
     system("#{editor} #{path()}")
   end
@@ -100,14 +102,15 @@ class DBFile
   def load_in_memory_db
     @file = File.new(self.path, 'r')
     files = @file.readlines
-    @audio_files = files.collect {|s| s.chomp}
+    @audio_files = files.map { |s| s.chomp }
     # Searching (potentially) UTF-8-encoded file names doesn't work very
     # well, so a converted list (in @audio_files_in_ascii) will be used
     # instead.
     @audio_files_in_ascii = []
-    for i in 0 .. @audio_files.length - 1 do
-      @audio_files_in_ascii[i] = @audio_files[i].encode('US-ASCII',
-        :undef => :replace, :invalid => :replace)
+    (0 .. @audio_files.length - 1).each do |i|
+      @audio_files_in_ascii[i] =
+        @audio_files[i].encode('US-ASCII', undef: :replace,
+                               invalid: :replace)
     end
   end
 end
