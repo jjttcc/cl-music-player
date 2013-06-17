@@ -6,7 +6,11 @@ class ExifInfoTool < InfoTool
   def initialize
   end
 
-    def extraction_command(file)
-      "exiftool #{file}"
+    def extraction_command(filepath)
+      if filepath.include?("'")
+        "exiftool \"#{filepath}\""
+      else
+        "exiftool '#{filepath}'"
+      end
     end
 end

@@ -1,6 +1,10 @@
 # encoding: UTF-8
 
+require 'ruby_contracts'
+
 class DBFile
+  include Contracts::DSL
+
   attr_reader :path, :audio_files, :db_newly_created
 
   private
@@ -9,6 +13,8 @@ class DBFile
   AUDIO_EXT_EXPR = '\.' + AUDIO_EXTENSIONS.join('$|\.') + '$'
   DEFAULT_EDITOR = 'vi'
 
+  pre "path-not-empty" do |path| path != nil && ! path.empty? end
+  post "audio_files exists" do audio_files != nil end
   def initialize(path, rebuild = false)
     @db_newly_created = false
     @path = path
@@ -41,6 +47,7 @@ class DBFile
 
   # Append any files found matching the specified patterns to the database
   # file.
+  pre 'patterns not nil' do |patterns| patterns != nil end
   def append_to_database(patterns)
     basecommand = "locate -r '"
     open(self.path, 'a') do |f|
@@ -63,6 +70,7 @@ class DBFile
   end
 
   # First file path found that matches `pattern'
+  pre 'pattern not nil' do |pattern| pattern != nil end
   def matchfor(pattern)
     result = nil
     matches = @audio_files_in_ascii.grep(/#{pattern}/i)
@@ -73,11 +81,11 @@ class DBFile
   end
 
   # All file paths found that match `pattern'
+  pre 'pattern not nil' do |pattern| pattern != nil end
   def matchesfor(pattern)
     result = []
     j = 0
     r = Regexp.new(/#{pattern}/i)
-#    for i in 0 .. @audio_files_in_ascii.length - 1 do
     (0 .. @audio_files_in_ascii.length - 1).each do |i|
       if r.match(@audio_files_in_ascii[i])
         result[j] = @audio_files[i]
