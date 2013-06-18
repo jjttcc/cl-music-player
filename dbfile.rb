@@ -1,5 +1,4 @@
-# encoding: UTF-8
-
+# encoding: utf-8
 require 'ruby_contracts'
 
 class DBFile

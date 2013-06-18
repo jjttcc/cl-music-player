@@ -1,3 +1,4 @@
+# encoding: utf-8
 class OptionState
   attr_reader :regular_arguments, :report_only, :listfiles, :cl_error,
     :rebuild_db, :showinfo, :editdb

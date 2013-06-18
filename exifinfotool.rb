@@ -1,3 +1,4 @@
+# encoding: utf-8
 # InfoTool implemented using the exiftool program
 
 require_relative './infotool'

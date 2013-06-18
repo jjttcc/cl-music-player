@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Player
   include Process
 
@@ -13,7 +14,7 @@ class Player
       command += "\"#{f}\" "
     end
     pid = fork { exec command }
-#!!!Note: Use waitpid2 to also get/check command's exit status.
+# !!!Note: Use waitpid2 to also get/check command's exit status.
 #    waitpid(pid)
   end
 
