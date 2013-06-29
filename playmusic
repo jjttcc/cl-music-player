@@ -1,0 +1,69 @@
+#!/bin/env ruby
+# encoding: utf-8
+
+require_relative './configuration'
+require_relative './player'
+require_relative './optionstate'
+
+configuration = Configuration.new
+opt = configuration.optionstate
+db = configuration.db
+player = Player.new
+if opt.cl_error
+  puts opt.usage
+  exit 1
+end
+args = opt.regular_arguments
+list = []
+i = 0
+nonmatches = []
+args.each do |arg|
+  l = db.matchesfor(arg)
+  if l.empty?
+    if not db.db_newly_created
+      nonmatches << arg
+    else
+      $stderr.puts "No matches found for #{arg}"
+    end
+  end
+  list += l
+end
+# If some arguments did not match any files, try rebuilding the database.
+if not nonmatches.empty?
+  db.append_to_database(nonmatches)
+  nonmatches.each do |ptrn|
+    l = db.matchesfor(ptrn)
+    if l.empty?
+      $stderr.puts "No matches found for #{ptrn}"
+    end
+    list += l
+  end
+end
+
+if opt.editdb
+  db.edit
+  exit 0
+end
+if not opt.report_only
+  if list.length > 0
+    player.playfiles(list)
+  end
+end
+if opt.listfiles or opt.showinfo
+  if not opt.showinfo
+    output = list.join("\n")
+  else
+    output = ''
+    list.each do |path|
+      output += "#{path}\n"
+      tool = configuration.infotool
+      output += tool.info_for(path)
+      output += "\n"
+    end
+  end
+  pager = ENV['PAGER'] || 'more'
+  begin
+    IO.popen(pager, "w") { |f| f.puts output }
+  rescue
+  end
+end
