@@ -1,10 +1,14 @@
 # encoding: utf-8
+require 'ruby_contracts'
 require_relative './dbfile'
 require_relative './exifinfotool'
 
 class Configuration
+  include Contracts::DSL
   attr_reader :db, :infotool, :optionstate
 
+  post "attrs_set" do db != nil && optionstate != nil end
+  post :info_set_ifavail do implies(infotool_available, infotool != nil) end
   def initialize
     @optionstate = OptionState.new(self)
     @db = DBFile.new(File.join(ENV['HOME'], '.cache', 'playmusic',

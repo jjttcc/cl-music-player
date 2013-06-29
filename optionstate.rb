@@ -1,8 +1,13 @@
 # encoding: utf-8
+require 'ruby_contracts'
+
 class OptionState
+  include Contracts::DSL
   attr_reader :regular_arguments, :report_only, :listfiles, :cl_error,
     :rebuild_db, :showinfo, :editdb
 
+  pre :config do |config| config != nil end
+  post :config_set do |result, config| @config == config end
   def initialize(config)
     @report_only = false
     @cl_error = false
@@ -41,6 +46,7 @@ class OptionState
     arg =~ /^-/
   end
 
+  type :in => [Numeric]
   def process_option(i)
     case ARGV[i]
     when /-l/
