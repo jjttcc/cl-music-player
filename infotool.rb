@@ -12,7 +12,7 @@ class InfoTool
   end
 
   # Metadata information for the specified file
-  pre 'path-not-empty' do |fpth| fpth != nil && ! fpth.empty? end
+  pre :path_not_empty do |fpth| fpth != nil && ! fpth.empty? end
   def info_for(filepath)
     stream = IO.popen(extraction_command(filepath))
     stream.read

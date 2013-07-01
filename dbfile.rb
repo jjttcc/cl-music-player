@@ -42,7 +42,7 @@ class DBFile
   end
 
   # First file path found that matches `pattern'
-  pre 'pattern not nil' do |pattern| pattern != nil end
+  pre :pattern_not_nil do |pattern| pattern != nil end
   def matchfor(pattern)
     result = nil
     matches = @audio_files_in_ascii.grep(/#{pattern}/i)
@@ -53,7 +53,7 @@ class DBFile
   end
 
   # All file paths found that match `pattern'
-  pre 'pattern not nil' do |pattern| pattern != nil end
+  pre :pattern_not_nil do |pattern| pattern != nil end
   def matchesfor(pattern)
     result = []
     j = 0
