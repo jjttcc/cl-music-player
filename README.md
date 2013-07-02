@@ -20,3 +20,17 @@ Synopsis
     playmusic -l mozart        # List matches for 'mozart'
 
     playmusic mozart.*figaro   # Play, e.g., .../mozart/le-nozze-di-figaro/Track*.wav
+
+
+Portability
+===============
+
+Command-Line Music Player currently only runs on Linux, although it may be
+straightforward to port it to other UNIXes, including OS X.  A Windows port
+is probably possible, especially if cygwin is used.
+
+
+Dependencies
+===============
+
+[to-be-listed] (FIXME)
