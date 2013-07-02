@@ -27,7 +27,7 @@ Portability
 
 Command-Line Music Player currently only runs on Linux, although it may be
 straightforward to port it to other UNIXes, including OS X.  A Windows port
-is probably possible, especially if cygwin is used.
+is probably possible with some work, especially if cygwin is used.
 
 
 Dependencies
