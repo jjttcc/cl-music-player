@@ -1,6 +1,9 @@
 # encoding: utf-8
+# Copyright 2013  Jim Cochrane - GNU GPL, verson 2 (See the LICENSE file.)
+
 require 'ruby_contracts'
 
+# Command-line option processing logic
 class OptionState
   include Contracts::DSL
   attr_reader :regular_arguments, :report_only, :listfiles, :cl_error,

@@ -1,8 +1,11 @@
 # encoding: utf-8
+# Copyright 2013  Jim Cochrane - GNU GPL, verson 2 (See the LICENSE file.)
+
 require 'ruby_contracts'
 require_relative './dbfile'
 require_relative './exifinfotool'
 
+# Application configuration state/logic
 class Configuration
   include Contracts::DSL
   attr_reader :db, :infotool, :optionstate

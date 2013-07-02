@@ -1,9 +1,10 @@
 # encoding: utf-8
-# Abstraction of encapsulation of tool used to extract file metadata
-# information.
+# Copyright 2013  Jim Cochrane - GNU GPL, verson 2 (See the LICENSE file.)
 
 require 'ruby_contracts'
 
+# Abstraction of encapsulation of tool used to extract file metadata
+# information.
 class InfoTool
   include Contracts::DSL
 

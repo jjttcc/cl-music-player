@@ -1,9 +1,10 @@
 # encoding: utf-8
-# InfoTool implemented using the exiftool program
+# Copyright 2013  Jim Cochrane - GNU GPL, verson 2 (See the LICENSE file.)
 
 require 'ruby_contracts'
 require_relative './infotool'
 
+# InfoTool implemented using the exiftool program
 class ExifInfoTool < InfoTool
   include Contracts::DSL
 

@@ -1,6 +1,9 @@
 # encoding: utf-8
+# Copyright 2013  Jim Cochrane - GNU GPL, verson 2 (See the LICENSE file.)
+
 require 'ruby_contracts'
 
+# Media-playing behavior
 class Player
   include Contracts::DSL
   include Process
