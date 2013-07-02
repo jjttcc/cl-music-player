@@ -3,7 +3,7 @@
 
 require 'ruby_contracts'
 
-# File-base database functionality
+# File-based database functionality
 class DBFile
   include Contracts::DSL
 
