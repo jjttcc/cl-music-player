@@ -1,4 +1,4 @@
-Command-Line Music Player
+Command-Line Music Player (CLMP)
 ===============
 
 A simple, command-line-based music player
